@@ -13,9 +13,9 @@ function descargarArchivoCallback(nombreArchivo, callback){
 
 // uso de la función descargarArchivoCallback
 descargarArchivoCallback("Archivo.txt", (error, resultado) => {
-    if(error){
-        console.error("Error al descargar el archivo:", error);
-    }else{
-        console.log("Archivo descargado con éxito:", resultado);
+    if(error){ 
+        console.error("❌ Error al descargar el archivo:", error);
+    }else {
+        console.log("✅ Archivo descargado con éxito:", resultado);
     }
 })

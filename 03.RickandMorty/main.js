@@ -29,8 +29,15 @@ async function getCharacters(page = 1) {
     // parsear o convertir la respuesta JSON a un objeto JavaScript
     const data = await response.json();
 
+    // actualizar el tola de páginas disponibles (lo proporciona la API)
+    totalPages = data.info.pages; // total de páginas disponibles
+
     // renderizar los personajes en el contenedor
     renderCharacters(data.results);
+
+    /// actualizar los botones de la paginación
+    updateButtons();
+
   } catch (error) {
     // en caso de error, se muesta un mensaje en el contenedor de los personajes
     container.innerHTML = ` <p> ❌ Error al obtener los personajes: ${error.message}</p>`;
@@ -43,7 +50,7 @@ function renderCharacters(characters) {
   // Limpiar el contenedor antes de insertar los nuevos personajes
   container.innerHTML = ""; // limpiamos el contenedor
   // Iterar sobre cada personaje  en el array de personajes
-  characters.forEach((param) => {
+  characters.forEach(param => {
     // crear un div con una clase llamada "card" para reprensentar cada personaje
     const card = document.createElement("div");
     card.className = "card"; // añadir la calse "card" al div
@@ -62,6 +69,30 @@ function renderCharacters(characters) {
         container.appendChild(card); // añadir la tarjeta al contenedor de personajes
   });
 }
+
+
+// Función que habilita o deshabilita los botones de paginación
+// según la página actual
+function updateButtons() {
+    prevButton.disabled = currentPage === 1; // deshabilitar el botón "anterior" si estamos en la primera página
+    nextButton.disabled = currentPage === totalPages; // deshabilitar el botón "siguiente" si estamos en la última página
+}
+
+// Evento click para el botón "anterior"
+prevButton.addEventListener('click', () => {
+    if(currentPage > 1){
+        currentPage--; // disminuir la página actual
+        getCharacters(currentPage); // obtener los personajes de la nueva página
+    }
+})
+
+// Evento click para el botón "siguiente"
+nextButton.addEventListener('click', () => {
+    if(currentPage < totalPages){
+        currentPage++; // incrementar la página actual
+        getCharacters(currentPage); // obtener los personajes de la nueva página
+    }
+})
 
 // Llamada inicial para mostrar la primera página de personajes al cargar la app
 getCharacters();

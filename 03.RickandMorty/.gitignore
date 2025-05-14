@@ -1,0 +1,3 @@
+#! archivos que no debes subir a github
+node_modules    
+package-lock.json

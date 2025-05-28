@@ -107,10 +107,8 @@ function renderProducts(products){
         // Agregar la fila a la tabla
         productTable.appendChild(row);
     })
-}
 
-// Asignar eventos a los botones de editar y eliminar productos
-
+      // Asignar eventos a los botones de editar y eliminar productos
 document.querySelectorAll('.edit-btn').forEach(button => {
     button.addEventListener('click', () => {
         const id = button.getAttribute('data-id'); // Obtener el ID del producto desde el atributo data-id del botón
@@ -124,6 +122,9 @@ document.querySelectorAll('.delete-btn').forEach(button => {
         deleteProduct(id); // Llamar a la función para eliminar el producto con el ID correspondiente
     })
 })
+}
+
+
 
 //Función para eliminar un producto mediante su ID
 async function deleteProduct(id){

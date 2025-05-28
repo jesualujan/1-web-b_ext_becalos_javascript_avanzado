@@ -100,13 +100,66 @@ function renderProducts(products){
         <td>${p.name}</td>
         <td>${p.price}</td>   
         <td>
-            <button class="btn btn-outline-warning btn-sm edit-btn">Editar</button>
-            <button class="btn btn-outline-danger btn-sm delete-btn">Eliminar</button>
+            <button class="btn btn-outline-warning btn-sm edit-btn" data-id="${p.id}">Editar</button>
+            <button class="btn btn-outline-danger btn-sm delete-btn" data-id="${p.id}">Eliminar</button>
         </td>
         ` 
         // Agregar la fila a la tabla
         productTable.appendChild(row);
     })
 }
+
+// Asignar eventos a los botones de editar y eliminar productos
+
+document.querySelectorAll('.edit-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const id = button.getAttribute('data-id'); // Obtener el ID del producto desde el atributo data-id del botón
+        editProduct(id); // Llamar a la función para editar el producto con el ID correspondiente
+    })
+})
+
+document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const id = button.getAttribute('data-id'); // Obtener el ID del producto desde el atributo data-id del botón
+        deleteProduct(id); // Llamar a la función para eliminar el producto con el ID correspondiente
+    })
+})
+
+//Función para eliminar un producto mediante su ID
+async function deleteProduct(id){
+    //asegurarme que el id es un número
+    const idNumber = Number(id);
+    // confirmar la eliminación del producto
+    if(!confirm('Estás seguro de eliminar este producto?')) return; // Si el usuario no confirma, salir de la función
+    try{
+        // Hacer una solicitud DELETE a la API para eliminar el producto
+        const response = await fetch(`${API_URL}/${idNumber}`, { method: 'DELETE', }); // Método para eliminar un producto
+        // Manejo de error en la respuesta del servidor
+        if(!response.ok) throw new Error(`Status: ${response.status}`); // Si la respuesta no es OK, lanzar un error
+        clearError(); // Limpiar el mensaje de error si la solicitud fue exitosa
+        // si la respuesta es correcta, actualizar la lista de productos
+        await getProducts(); // recargar la lista de productos después de eliminar el producto
+    }catch(error){
+        showError('Error al eliminar el producto: ' + error.message); // Mostrar un mensaje de error si ocurre un error al eliminar el producto
+    }
+}
+
+
+// Función para editar un producto en el formulario
+
+async function editProduct(id) {
+    try{
+        const response = await fetch(`${API_URL}/${id}`); // Hacer una solicitud GET a la API para obtener el producto por ID
+        const product = await response.json();
+        inputId.value = product.id; // Asignar el ID del producto al campo de ID del formulario
+        inputName.value = product.name; // Asignar el nombre del producto al campo de nombre del formulario
+        inputPrice.value = product.price; // Asignar el precio del producto al campo de precio del formulario
+    }catch(error){
+        showError('Error al editar el producto: ' + error.message); // Mostrar un mensaje de error si ocurre un error al editar el producto
+    }
+}
+
+
+
 
 getProducts(); // Llamar a la función para obtener los productos al cargar la página

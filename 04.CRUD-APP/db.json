@@ -1,9 +1,9 @@
 {
   "products": [
-    { 
-      "id": 1, 
-      "name": "Teclado Gamer", 
-      "price": 45.99 
+    {
+      "id": "1",
+      "name": "Teclado RGBA",
+      "price": "46"
     },
     {
       "id": "2",
@@ -251,9 +251,9 @@
       "price": 28
     },
     {
-      "id": 51,
       "name": "PLAYSTATION 5",
-      "price": "99"
+      "price": "50",
+      "id": "51"
     }
   ]
 }

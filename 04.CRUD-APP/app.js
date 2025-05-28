@@ -124,8 +124,6 @@ document.querySelectorAll('.delete-btn').forEach(button => {
 })
 }
 
-
-
 //Función para eliminar un producto mediante su ID
 async function deleteProduct(id){
     //asegurarme que el id es un número
@@ -145,9 +143,7 @@ async function deleteProduct(id){
     }
 }
 
-
 // Función para editar un producto en el formulario
-
 async function editProduct(id) {
     try{
         const response = await fetch(`${API_URL}/${id}`); // Hacer una solicitud GET a la API para obtener el producto por ID
@@ -160,7 +156,26 @@ async function editProduct(id) {
     }
 }
 
+// evento para buscar productos por su ID
+searchBtn.addEventListener('click', async () => {
+    const id = searchInput.value.trim(); // Obtener el ID del producto desde el input de búsqueda
+    if(!id) return; // evitar busquedas con campos vacíos
+    try{
+        const response = await fetch(`${API_URL}/${id}`); // Hacer una solicitud GET a la API para obtener el producto por ID
+        if(!response.ok) throw new Error("Producto no encontrado"); // Si la respuesta no es OK, lanzar un error
+        const product = await response.json(); // Convertir la respuesta a JSON
+        renderProducts([product]); // Renderizar solo el producto encontrado en la tabla
+    }catch(error){
+        showError('Error al buscar el producto: ' + error.message); // Mostrar un mensaje de error si ocurre un error al buscar el producto
+    }
+});
 
+// evento para limpiar el formulario de busqueda y recargar todos los productos
+resetBtn.addEventListener('click', () => {
+    productForm.reset(); // Limpiar el formulario
+    inputId.value = ''; // Limpiar el campo de ID del formulario
+    getProducts(); // Recargar la lista de productos
+});
 
 
 getProducts(); // Llamar a la función para obtener los productos al cargar la página

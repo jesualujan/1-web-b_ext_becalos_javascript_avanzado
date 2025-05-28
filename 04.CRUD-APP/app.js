@@ -60,12 +60,14 @@ productForm.addEventListener('submit', async (e) => {
             const allProductsRes = await fetch(API_URL); // obtener la lista de productos actuales
             const allProducts = await  allProductsRes.json(); // convertir la respuesta a JSON
             // al tener la lista de productos, generar un nuevo ID 
-            const newId = allProducts.length ? Math.floor(Math.max(...allProducts.map(p => Number(p.id))) + 1) : 1; // Generar un nuevo ID basado en el máximo ID existente
+            const newId = allProducts.length 
+            ? Math.max(...allProducts.map(p => Number(p.id))) + 1
+             : 1; // Generar un nuevo ID basado en el máximo ID existente
             // Enviar la solicitud para crear un nuevo producto
              response = await fetch(API_URL , {
                 method: 'POST', // Método para actualizar un producto existente
                 headers: {'Content-Type': 'application/json'}, // Indicar que el cuerpo de la solicitud es JSON
-                body: JSON.stringify({id: newId, ...payload}), // Convertir el objeto payload a una cadena JSON
+                body: JSON.stringify({id: String(newId), ...payload}), // Convertir el objeto payload a una cadena JSON
         });
         }
         // manejor de error en la respuesta del servidor

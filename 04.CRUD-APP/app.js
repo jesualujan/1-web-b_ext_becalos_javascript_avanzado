@@ -27,6 +27,57 @@ function clearError(){
     errorMessage.style.display = 'none'; // Ocultar el elemento de error
 }
 
+//Evento para manejar el envío del formulario ( Crear y Editar un producto)
+productForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Evitar la recarga de la página al enviar el formulario.
+
+    const id = inputId.value.trim();     // Obtener el valor del campo de ID del producto
+    const name = inputName.value.trim(); // Obtener el valor del campo de nombre del producto
+    const price = inputPrice.value.trim(); // Obtener el valor del campo de precio del producto
+
+    //validación básica: no permitir campos vacíos
+    if(!name || isNaN(price)){
+        showError('Por favor, completa todos los campos correctamente.'); // Mostrar un mensaje de error si los campos no están completos
+        return;
+    }
+
+    // crear un objeto con la información del producto
+    const payload = {name,price}; // pyload es un objeto que contiene la información del producto que se va a enviar al servidor
+
+    try{
+        let response; // Variable para almacenar la respuesta del servidor
+        // Si el ID está vacío, significa que estamos creando un nuevo producto
+        if(id){
+            // si el producto ya tiene un ID, significa que estamos actualiizando un producto existente (método PUT)
+            response = await fetch(`${API_URL}/${id}`, {
+                method: 'PUT', // Método para actualizar un producto existente
+                headers: {'Content-Type': 'application/json'}, // Indicar que el cuerpo de la solicitud es JSON
+                body: JSON.stringify(payload), // Convertir el objeto payload a una cadena JSON
+            })
+        }else {
+            // si el producto no tiene un ID, significa que estamos creando un nuevo producto (método POST)
+            // obtener la lista de productos actuales para derterminar el nuevo ID
+            const allProductsRes = await fetch(API_URL); // obtener la lista de productos actuales
+            const allProducts = await  allProductsRes.json(); // convertir la respuesta a JSON
+            // al tener la lista de productos, generar un nuevo ID 
+            const newId = allProducts.length ? Math.floor(Math.max(...allProducts.map(p => Number(p.id))) + 1) : 1; // Generar un nuevo ID basado en el máximo ID existente
+            // Enviar la solicitud para crear un nuevo producto
+             response = await fetch(API_URL , {
+                method: 'POST', // Método para actualizar un producto existente
+                headers: {'Content-Type': 'application/json'}, // Indicar que el cuerpo de la solicitud es JSON
+                body: JSON.stringify({id: newId, ...payload}), // Convertir el objeto payload a una cadena JSON
+        });
+        }
+        // manejor de error en la respuesta del servidor
+        if(!response.ok) throw new Error(`Status: ${response.status}`); // Si la respuesta no es OK, lanzar un error
+        clearError(); // Limpiar el mensaje de error si la solicitud fue exitosa
+        await getProducts(); // actulizar la lista de productos en la tabla
+        productForm.reset(); // Limpiar el formulario después de enviar los datos
+    }catch(error){
+        showError('Error al enviar los datos: ' + error.message); // Mostrar un mensaje de error si ocurre un error al enviar los datos
+    }
+})
+
 // Función para obtener la lista de productos desde el servidor y mostrarlos en la tabla
 async function getProducts() {
     try{
